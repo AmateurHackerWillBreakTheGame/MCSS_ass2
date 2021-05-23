@@ -1,37 +1,33 @@
 package Daisyworld;
 import java.util.Random;
-
-/**
- * DaisyType represent the type of daisy, which contains black and white
- */
-enum DaisyType {
-	WHITE,
-	BLACK;
-}
+import Daisyworld.Params.DaisyType;
 
 /**
  * Daisy is a class that contains all the relevant information of daisies 
  * grow on a patch 
  */
 public class Daisy {
-	static final int MAX_AGE = 25;
 	private int age;
-	public final double albedo; 
-	public final DaisyType daisyType;
+	private double albedo;
+	private DaisyType daisyType;
 
-	public Daisy(double albedo, DaisyType daisyType) {
-		Random r = new Random();
-		this.age = r.nextInt(MAX_AGE);
-		this.albedo = albedo;
-		this.daisyType = daisyType;
-	}
-
-	/**
-	 * get the current age of the daisy
-	 * @return
-	 */
-	public int getAge() {
-		return age;
+	public Daisy(boolean sprout, DaisyType daisyType) {
+		
+		// newborn then set age to age_max, otherwise generate it randomly
+		if (sprout) {
+			setAge(Params.MAX_AGE);
+		} else {
+			Random r = new Random();
+			setAge(r.nextInt(Params.MAX_AGE));
+		}
+		
+		setDaisyType(daisyType);
+		
+		if (daisyType == DaisyType.WHITE) {
+			setAlbedo(Params.WHITE_ALBEDO);
+		} else {
+			setAlbedo(Params.BLACK_ALBEDO);
+		}
 	}
 
 	/**
@@ -39,11 +35,47 @@ public class Daisy {
 	 * exceed the maximum age
 	 */
 	public void grow() {
-		assert(age < MAX_AGE);
+		assert(age < Params.MAX_AGE);
 		this.age ++;
 	}
 	
+	/*
+	 * check the survivability of the daisy.
+	 */
+	public boolean checkSurvivability() {
+		
+		setAge(age + 1);
+		if (getAge() < Params.MAX_AGE) {
+			// TODO	
+		} else {
+			// die
+			return false;
+		}
+		
+		return true;
+	}
+	
+	public DaisyType getDaisyType() {
+		return daisyType;
+	}
 
+	public void setDaisyType(DaisyType daisyType) {
+		this.daisyType = daisyType;
+	}
 
+	public double getAlbedo() {
+		return albedo;
+	}
 
+	public void setAlbedo(double albedo) {
+		this.albedo = albedo;
+	}
+
+	public int getAge() {
+		return age;
+	}
+	
+	public void setAge(int age) {
+		this.age = age;
+	}
 }
