@@ -13,9 +13,9 @@ public class Daisy {
 
 	public Daisy(boolean sprout, DaisyType daisyType) {
 		
-		// newborn then set age to age_max, otherwise generate it randomly
+		// newborn then set age to 0, otherwise generate it randomly
 		if (sprout) {
-			setAge(Params.MAX_AGE);
+			setAge(0);
 		} else {
 			Random r = new Random();
 			setAge(r.nextInt(Params.MAX_AGE));
@@ -42,17 +42,23 @@ public class Daisy {
 	/*
 	 * check the survivability of the daisy.
 	 */
-	public boolean checkSurvivability() {
+	public int checkSurvivability(double temperature) {
+		double seedThreshold = 0;
+		Random r = new Random();
 		
 		setAge(age + 1);
 		if (getAge() < Params.MAX_AGE) {
-			// TODO	
+			seedThreshold =((0.1457 * temperature) - (0.0032 * (temperature * temperature)) - 0.6443);
+
+			if (r.nextDouble() < seedThreshold) {
+				return 2;
+			}
 		} else {
 			// die
-			return false;
+			return 0;
 		}
 		
-		return true;
+		return 1;
 	}
 	
 	public DaisyType getDaisyType() {

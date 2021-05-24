@@ -3,6 +3,8 @@ import java.lang.Math;
 
 public class Patch {
 
+	private char image = '_';
+	
 	private Daisy daisy;
 	
 	private double temperature = Params.global_tempreature;
@@ -12,17 +14,11 @@ public class Patch {
 	}
 	
 	public Patch(Params.DaisyType daisyType) {
-		daisy = (daisyType == Params.DaisyType.BLACK) ? growBlackDaisy() : growWhiteDaisy();
+		daisy = (daisyType == Params.DaisyType.BLACK) ? initBlackDaisy() : initWhiteDaisy();
 	}
-	
-	public synchronized void update() {}
 
-	public void daisyDied() {
+	public synchronized void daisyDied() {
 		daisy = null;
-	}
-
-	public synchronized void diffuse() {
-		// TODO send 50% of its temperature to its 8 neighbours
 	}
 	
 	public synchronized void calculateTemperature() {
@@ -44,24 +40,40 @@ public class Patch {
 		temperature = (temperature + local_heating) / 2;
 	}
 	
-	public double getTemperature() {
+	public synchronized double getTemperature() {
 		return temperature;
 	}
 	
-	public void setTemperature(double temperature) {
+	public synchronized void setTemperature(double temperature) {
 		this.temperature = temperature;
 	}
 	
+	public Daisy initWhiteDaisy() {
+		image = 'W';
+		return new Daisy(false, Params.DaisyType.BLACK);
+	}
+	
+	public Daisy initBlackDaisy() {
+		image = 'B';
+		return new Daisy(false, Params.DaisyType.BLACK);
+	}
+	
 	public Daisy growWhiteDaisy() {
+		image = 'W';
 		return new Daisy(true, Params.DaisyType.BLACK);
 	}
 	
 	public Daisy growBlackDaisy() {
+		image = 'B';
 		return new Daisy(true, Params.DaisyType.BLACK);
 	}
 	
-	public boolean existDaisy() {
-		return true;
+	public synchronized boolean existDaisy() {
+		if (this.getDaisy() != null) {
+			return true;
+		}
+		
+		return false;
 	}
 	
 	public Daisy getDaisy() {
@@ -69,7 +81,7 @@ public class Patch {
 	}
 	
 	public String toString() {
-		return "0";
+		return "[" + image + "]";
 	}
 
 }

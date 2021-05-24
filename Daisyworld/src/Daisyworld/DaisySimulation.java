@@ -10,7 +10,7 @@ public class DaisySimulation {
 		
 		// 20% of black daisies, 20% of white daisies
 		int numBlack = (Params.BLACK_PORTION * Params.ROWS * Params.COLUMNS) / 100;
-		int numWhite = (Params.WHITE_PORTION * Params.ROWS * Params.COLUMNS) / 100;
+		int numWhite = (Params.WHITE_PORTION * Params.ROWS * Params.COLUMNS) / 100;		
 		
 		Random r = new Random();
 		
@@ -23,19 +23,19 @@ public class DaisySimulation {
 				
 				if (numBlack > 0 || numWhite > 0) {
 					// generate black daisy
-					if (numBlack > 0 && r.nextInt(100) > Params.BLACK_PORTION) {
+					if (numBlack > 0 && r.nextInt(100) <= Params.BLACK_PORTION) {
 						daisyWorld[i][j] = new Patch(Params.DaisyType.BLACK);
 						numBlack--;
-
 					// generate black daisy
-					} else if (numWhite > 0 && r.nextInt(100) > Params.WHITE_PORTION) {
+					} else if (numWhite > 0 && r.nextInt(100) <= Params.WHITE_PORTION) {
 						daisyWorld[i][j] = new Patch(Params.DaisyType.WHITE);
 						numWhite--;
-						
 					// empty place
 					} else {
 						daisyWorld[i][j] = new Patch();
 					}
+				} else {
+					daisyWorld[i][j] = new Patch();
 				}
 			}
 		}
@@ -62,7 +62,7 @@ public class DaisySimulation {
 		// check all threads still alive
 		while (pc.isAlive()) {
 			try {
-				Thread.sleep(50);
+				Thread.sleep(1);
 			} catch (Exception e) {
 				PatchControlThread.terminate(e);
 			}
@@ -71,7 +71,6 @@ public class DaisySimulation {
 		// interrupt other threads
 		
 		System.out.println("Sim terminating");
-		System.out.println(PatchControlThread.getTerminateException());
 		System.exit(0);
 	}
 
