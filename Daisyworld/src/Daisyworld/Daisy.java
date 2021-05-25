@@ -45,20 +45,21 @@ public class Daisy {
 	public int checkSurvivability(double temperature) {
 		double seedThreshold = 0;
 		Random r = new Random();
+		int flag = 1;
 		
 		setAge(age + 1);
 		if (getAge() < Params.MAX_AGE) {
-			seedThreshold =((0.1457 * temperature) - (0.0032 * (temperature * temperature)) - 0.6443);
-
+			seedThreshold =(0.1457 * temperature) - (0.0032 * (temperature * temperature)) - 0.6443;
+			
 			if (r.nextDouble() < seedThreshold) {
-				return 2;
+				flag = 2;
 			}
 		} else {
 			// die
-			return 0;
+			flag = 0;
 		}
 		
-		return 1;
+		return flag;
 	}
 	
 	public DaisyType getDaisyType() {

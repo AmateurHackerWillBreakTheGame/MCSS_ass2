@@ -37,14 +37,30 @@ public class PatchController extends PatchControlThread {
 		for (i = 0; i < Params.ROWS; i++) {
 			for (j = 0; j < Params.COLUMNS; j++) {
 				diffuseMap[i][j] = 0;
-
+				int neighbours = 0;
+				
+				// calculate neighbours number
 				for (x = i - 1; x <= i + 1; x++) {
 					if (x >= 0 && x < Params.ROWS) {
 						for (y = j - 1; y <= j + 1; y++) {
 							if (y >= 0 && y < Params.COLUMNS) {
 								// exclude the center patch
-								if (y != j && x != i) {
-									diffuseMap[x][y] += map[i][j].getTemperature() / 16;
+								if (y != j || x != i) {
+									neighbours += 1;
+								}
+							}
+						}
+					}
+				}
+				
+				// assign half of the temperature evenly to neighbours
+				for (x = i - 1; x <= i + 1; x++) {
+					if (x >= 0 && x < Params.ROWS) {
+						for (y = j - 1; y <= j + 1; y++) {
+							if (y >= 0 && y < Params.COLUMNS) {
+								// exclude the center patch
+								if (y != j || x != i) {
+									diffuseMap[x][y] += map[i][j].getTemperature() / (2 * neighbours);
 								}
 							}
 						}
@@ -68,12 +84,10 @@ public class PatchController extends PatchControlThread {
 			for (j = 0; j < Params.COLUMNS; j++) {
 				 if (map[i][j].existDaisy()) {
 					 int flag = map[i][j].getDaisy().checkSurvivability(map[i][j].getTemperature());
-
 					 // generate new seed
 					 if (flag == 2) {
 						 growRandomEmptyPatch(map, i, j);
 					 } else if (flag == 0) {
-
 						 map[i][j].daisyDied();
 					 }
 				 }
@@ -83,18 +97,19 @@ public class PatchController extends PatchControlThread {
 	
 	private synchronized void growRandomEmptyPatch(Patch[][] map, int i, int j) {
 		int x, y;
-		
+
 		for (x = i - 1; x <= i + 1; x++) {
 			if (x >= 0 && x < Params.ROWS) {
 				for (y = j - 1; y <= j + 1; y++) {
-					if (y >= 0 && x < Params.ROWS) {
-						if (map[x][y].getDaisy() == null) {
-							
-							 if (map[i][j].getDaisy().getDaisyType() == Params.DaisyType.BLACK) {
-								 map[x][y].growBlackDaisy();
-							 } else {
-								 map[x][y].growWhiteDaisy();
-							 }
+					if (y >= 0 && y < Params.COLUMNS) {
+						if (map[x][y].getDaisy() == null && (x != i || y != j)) {
+							if (map[i][j].getDaisy().getDaisyType() == Params.DaisyType.BLACK) {
+								map[x][y].growBlackDaisy();
+								System.out.println(map[x][y].getDaisy().getAge());
+							} else {
+								map[x][y].growWhiteDaisy();
+								System.out.println(map[x][y].getDaisy().getAge());
+							}
 						}
 					}
 				}
@@ -102,26 +117,35 @@ public class PatchController extends PatchControlThread {
 		}
 	}
 
-	private synchronized boolean existDaisy() {
+	private synchronized boolean existBothDaisy() {
 		int i, j;
-
+		boolean white = false;
+		boolean black = false;
+		
 		for (i = 0; i < Params.ROWS; i++) {
 			for (j = 0; j < Params.COLUMNS; j++) {
 				 if (map[i][j].getDaisy() != null) {
-					 return true;
+					 if (map[i][j].getDaisy().getDaisyType() == Params.DaisyType.WHITE) {
+						 white = true;
+					 } else {
+						 black = true;
+					 }
 				 }
 			}
 		}
 
-		return false;
+		return white && black;
 	}
 	/*
 	 * mimic the go function
 	 */
 	public synchronized void run() {
 		int i, j;
+		int n = 0;
 			
-		while (existDaisy()) {
+		while (existBothDaisy() && n < 1000) {
+			n += 1;
+			
 			// calculate the new temperature
 			for (i = 0; i < Params.ROWS; i++) {
 				for (j = 0; j < Params.COLUMNS; j++) {
@@ -146,7 +170,6 @@ public class PatchController extends PatchControlThread {
 
 	private void update() {
 		int i, j;
-		
 		System.out.print("\n");
 		System.out.println("                    --------------- Simulation round " + counter + " ---------------");
 		System.out.println("current global temperature: " + global_temperature);

@@ -3,7 +3,7 @@ import java.lang.Math;
 
 public class Patch {
 
-	private char image = '_';
+	public char image = ' ';
 	
 	private Daisy daisy;
 	
@@ -14,11 +14,16 @@ public class Patch {
 	}
 	
 	public Patch(Params.DaisyType daisyType) {
-		daisy = (daisyType == Params.DaisyType.BLACK) ? initBlackDaisy() : initWhiteDaisy();
+		if (daisyType == Params.DaisyType.BLACK) {
+			initBlackDaisy();
+		} else {
+			initWhiteDaisy();
+		}
 	}
 
 	public synchronized void daisyDied() {
 		daisy = null;
+		image = ' ';
 	}
 	
 	public synchronized void calculateTemperature() {
@@ -26,7 +31,7 @@ public class Patch {
 		double local_heating = 0;
 		
 		if (daisy != null) {
-			absorbed_luminosity = (1 - Params.SURFACE_ALBEDO) * daisy.getAlbedo();
+			absorbed_luminosity = (1 - daisy.getAlbedo()) * Params.solar_luminosity;
 		} else {
 			absorbed_luminosity = (1 - Params.SURFACE_ALBEDO) * Params.solar_luminosity;
 		}
@@ -48,24 +53,24 @@ public class Patch {
 		this.temperature = temperature;
 	}
 	
-	public Daisy initWhiteDaisy() {
-		image = 'W';
-		return new Daisy(false, Params.DaisyType.BLACK);
+	public void initWhiteDaisy() {
+		image = 'o';
+		daisy = new Daisy(false, Params.DaisyType.WHITE);
 	}
 	
-	public Daisy initBlackDaisy() {
-		image = 'B';
-		return new Daisy(false, Params.DaisyType.BLACK);
+	public void initBlackDaisy() {
+		image = '*';
+		daisy = new Daisy(false, Params.DaisyType.BLACK);
 	}
 	
-	public Daisy growWhiteDaisy() {
-		image = 'W';
-		return new Daisy(true, Params.DaisyType.BLACK);
+	public void growWhiteDaisy() {
+		image = 'o';
+		daisy = new Daisy(true, Params.DaisyType.WHITE);
 	}
 	
-	public Daisy growBlackDaisy() {
-		image = 'B';
-		return new Daisy(true, Params.DaisyType.BLACK);
+	public void growBlackDaisy() {
+		image = '*';
+		daisy = new Daisy(true, Params.DaisyType.BLACK);
 	}
 	
 	public synchronized boolean existDaisy() {
