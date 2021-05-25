@@ -1,12 +1,17 @@
 package Daisyworld;
+import Daisyworld.Params.ScenarioType;
 
 public class PatchController extends PatchControlThread {
 	
-	private int counter = 0;
+	private int ticks = 0;
 	
 	private double global_temperature;
 	
 	protected Patch[][] map;
+	
+	private ScenarioType scenario = Params.scenario;
+	
+	private double solar_luminosity;
 	
 	// contains the value to be updated for each patch
 	protected double[][] diffuseMap = new double[Params.ROWS][Params.COLUMNS];
@@ -15,6 +20,18 @@ public class PatchController extends PatchControlThread {
 		super();
 		this.map = map;
 		this.global_temperature = calculate_global_temperature();
+		
+		if (scenario == Params.ScenarioType.high_solar_luminosity) {
+			solar_luminosity = 1.4;
+		} else if (scenario == Params.ScenarioType.low_solar_luminosity) {
+			solar_luminosity = 0.6;
+		} else if (scenario == Params.ScenarioType.maintain_current_luminosity) {
+			solar_luminosity = Params.solar_luminosity;
+		} else if (scenario == Params.ScenarioType.mid_solar_luminosity) {
+			solar_luminosity = 1.0;
+		} else {
+			solar_luminosity = 0.8;
+		}
 	}
 	
 	public synchronized double calculate_global_temperature() {
@@ -149,7 +166,7 @@ public class PatchController extends PatchControlThread {
 			// calculate the new temperature
 			for (i = 0; i < Params.ROWS; i++) {
 				for (j = 0; j < Params.COLUMNS; j++) {
-					 map[i][j].calculateTemperature();
+					 map[i][j].calculateTemperature(solar_luminosity);
 				}
 			}
 			
@@ -163,15 +180,30 @@ public class PatchController extends PatchControlThread {
 			global_temperature = calculate_global_temperature();
 			
 			// update display (maybe print?)
-			counter++;
+			ticks++;
 			update();
+			
+			// change solar_luminosity
+			if (scenario == Params.ScenarioType.high_solar_luminosity) {
+				solar_luminosity = 1.4;
+			} else if (scenario == Params.ScenarioType.low_solar_luminosity) {
+				solar_luminosity = 0.6;
+			} else if (scenario == Params.ScenarioType.ramp_up_ramp_down) {
+				if (ticks > 200 && ticks <= 400) {
+					solar_luminosity += 0.005;
+				} else if (ticks > 600 && ticks <= 850) {
+					solar_luminosity -= 0.0025;
+				}
+			} else if (scenario == Params.ScenarioType.mid_solar_luminosity) {
+				solar_luminosity = 1.0;
+			}
 		}
 	}
 
 	private void update() {
 		int i, j;
 		System.out.print("\n");
-		System.out.println("                    --------------- Simulation round " + counter + " ---------------");
+		System.out.println("                    --------------- Simulation round " + ticks + " ---------------");
 		System.out.println("current global temperature: " + global_temperature);
 		
 		for (i = 0; i < Params.ROWS; i++) {

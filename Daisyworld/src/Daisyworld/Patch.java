@@ -26,14 +26,14 @@ public class Patch {
 		image = ' ';
 	}
 	
-	public synchronized void calculateTemperature() {
+	public synchronized void calculateTemperature(double solar_luminosity) {
 		double absorbed_luminosity = 0;
 		double local_heating = 0;
 		
 		if (daisy != null) {
-			absorbed_luminosity = (1 - daisy.getAlbedo()) * Params.solar_luminosity;
+			absorbed_luminosity = (1 - daisy.getAlbedo()) * solar_luminosity;
 		} else {
-			absorbed_luminosity = (1 - Params.SURFACE_ALBEDO) * Params.solar_luminosity;
+			absorbed_luminosity = (1 - Params.SURFACE_ALBEDO) * solar_luminosity;
 		}
 		
 		if (absorbed_luminosity > 0) {
