@@ -36,24 +36,51 @@ public class PatchController extends PatchControlThread {
 	
 	public synchronized double calculate_global_temperature() {
 		double total = 0;
-		int i = 0, j = 0;
+		int i, j;
 		
-		for (; i < Params.ROWS; i++) {
-			for (; j < Params.COLUMNS; j++) {
+		for (i=0 ; i < Params.ROWS; i++) {
+			for (j=0 ; j < Params.COLUMNS; j++) {
 				total += map[i][j].getTemperature();
 			}
 		}
-		
 		return total / (Params.ROWS * Params.COLUMNS);
 	}
 	
 	public synchronized void diffuse() {
 		int i, j, x ,y;
+
+		
+		// initialize diffusemap
+		for (i=0; i<Params.ROWS; i++) {
+			for (j=0; j<Params.COLUMNS; j++) {
+				diffuseMap[i][j] = 0;
+			}
+		}
 		
 		// update the diffuseMap
 		for (i = 0; i < Params.ROWS; i++) {
 			for (j = 0; j < Params.COLUMNS; j++) {
-				diffuseMap[i][j] = 0;
+				
+				// assign half of the temperature evenly to neighbours
+				for (x = i - 1; x <= i + 1; x++) {
+					if (x >= 0 && x < Params.ROWS) {
+						for (y = j - 1; y <= j + 1; y++) {
+							if (y >= 0 && y < Params.COLUMNS) {
+								// exclude the center patch
+								if (y != j || x != i) {
+									diffuseMap[x][y] += map[i][j].getTemperature() / 16;
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+		
+		// update the temperature to map
+		for (i = 0; i < Params.ROWS; i++) {
+			for (j = 0; j < Params.COLUMNS; j++) {
+
 				int neighbours = 0;
 				
 				// calculate neighbours number
@@ -70,26 +97,7 @@ public class PatchController extends PatchControlThread {
 					}
 				}
 				
-				// assign half of the temperature evenly to neighbours
-				for (x = i - 1; x <= i + 1; x++) {
-					if (x >= 0 && x < Params.ROWS) {
-						for (y = j - 1; y <= j + 1; y++) {
-							if (y >= 0 && y < Params.COLUMNS) {
-								// exclude the center patch
-								if (y != j || x != i) {
-									diffuseMap[x][y] += map[i][j].getTemperature() / (2 * neighbours);
-								}
-							}
-						}
-					}
-				}
-			}
-		}
-		
-		// update the temperature to map
-		for (i = 0; i < Params.ROWS; i++) {
-			for (j = 0; j < Params.COLUMNS; j++) {
-				map[i][j].setTemperature(diffuseMap[i][j] + map[i][j].getTemperature() / 2);
+				map[i][j].setTemperature(diffuseMap[i][j] + map[i][j].getTemperature() / 2 + map[i][j].getTemperature() * (8-neighbours) / 16);
 			}
 		}
 	}
@@ -122,10 +130,8 @@ public class PatchController extends PatchControlThread {
 						if (map[x][y].getDaisy() == null && (x != i || y != j)) {
 							if (map[i][j].getDaisy().getDaisyType() == Params.DaisyType.BLACK) {
 								map[x][y].growBlackDaisy();
-								System.out.println(map[x][y].getDaisy().getAge());
 							} else {
 								map[x][y].growWhiteDaisy();
-								System.out.println(map[x][y].getDaisy().getAge());
 							}
 						}
 					}
@@ -160,7 +166,8 @@ public class PatchController extends PatchControlThread {
 		int i, j;
 		int n = 0;
 			
-		while (existBothDaisy() && n < 1000) {
+		while (n < 200) {
+//		while (existBothDaisy() && n < 1000) {
 			n += 1;
 			
 			// calculate the new temperature
@@ -206,15 +213,15 @@ public class PatchController extends PatchControlThread {
 		System.out.println("                    --------------- Simulation round " + ticks + " ---------------");
 		System.out.println("current global temperature: " + global_temperature);
 		
-		for (i = 0; i < Params.ROWS; i++) {
-			if (i < 10) {
-				System.out.print("0");
-			}
-			System.out.print(i + ": ");
-			for (j = 0; j < Params.COLUMNS; j++) {
-				System.out.print(map[i][j].toString());
-			}
-			System.out.print("\n");
-		}
+//		for (i = 0; i < Params.ROWS; i++) {
+//			if (i < 10) {
+//				System.out.print("0");
+//			}
+//			System.out.print(i + ": ");
+//			for (j = 0; j < Params.COLUMNS; j++) {
+//				System.out.print(map[i][j].toString());
+//			}
+//			System.out.print("\n");
+//		}
 	}
 }

@@ -36,7 +36,7 @@ public class Daisy {
 	 */
 	public void grow() {
 		assert(age < Params.MAX_AGE);
-		this.age ++;
+		setAge(getAge() + 1);
 	}
 	
 	/*
@@ -47,7 +47,7 @@ public class Daisy {
 		Random r = new Random();
 		int flag = 1;
 		
-		setAge(age + 1);
+		grow();
 		if (getAge() < Params.MAX_AGE) {
 			seedThreshold =(0.1457 * temperature) - (0.0032 * (temperature * temperature)) - 0.6443;
 			
