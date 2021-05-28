@@ -19,6 +19,7 @@ public class PatchController extends PatchControlThread {
 	// contains the value to be updated for each patch
 	protected double[][] diffuseMap = new double[Params.ROWS][Params.COLUMNS];
 	
+	/* generate a controller that mimic the map behaviours */
 	public PatchController(Patch[][] map) {
 		super();
 		this.map = map;
@@ -181,14 +182,13 @@ public class PatchController extends PatchControlThread {
 		return white && black;
 	}
 	/*
-	 * mimic the go function
+	 * mimic the go function, with a limitation of ticks performed
 	 */
 	public synchronized void run() {
 		int i, j;
 		int n = 0;
 			
-		while (n < 200) {
-//		while (existBothDaisy() && n < 1000) {
+		while (existBothDaisy() && n < Params.MAX_TICK) {
 			n += 1;
 			
 			// calculate the new temperature
@@ -234,15 +234,15 @@ public class PatchController extends PatchControlThread {
 		System.out.println("                    --------------- Simulation round " + ticks + " ---------------");
 		System.out.println("current global temperature: " + global_temperature);
 		
-//		for (i = 0; i < Params.ROWS; i++) {
-//			if (i < 10) {
-//				System.out.print("0");
-//			}
-//			System.out.print(i + ": ");
-//			for (j = 0; j < Params.COLUMNS; j++) {
-//				System.out.print(map[i][j].toString());
-//			}
-//			System.out.print("\n");
-//		}
+		for (i = 0; i < Params.ROWS; i++) {
+			if (i < 10) {
+				System.out.print("0");
+			}
+			System.out.print(i + ": ");
+			for (j = 0; j < Params.COLUMNS; j++) {
+				System.out.print(map[i][j].toString());
+			}
+			System.out.print("\n");
+		}
 	}
 }

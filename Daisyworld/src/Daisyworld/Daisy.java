@@ -1,17 +1,31 @@
 package Daisyworld;
 import java.util.Random;
-import Daisyworld.Params.DaisyType;
+import Daisyworld.Params;
 
 /**
  * Daisy is a class that contains all the relevant information of daisies 
  * grow on a patch 
  */
 public class Daisy {
-	private int age;
-	private double albedo;
-	private DaisyType daisyType;
+	/* maximum value of age for a daisy to live to */
+	private int maxAge = Params.MAX_AGE;
 
-	public Daisy(boolean sprout, DaisyType daisyType) {
+	/* the current age of a daisy */
+	private int age;
+
+	/* the albedo of the daisy */
+	private double albedo;
+
+	/* the type of daisy: black or white */
+	private Params.DaisyType daisyType;
+
+	/**
+	 * The constructor of Diays class, 
+	 * determine whether it is a randomly generated daisy, or a newborn daisy.
+	 * @param sprout whether it is a newborn or a randomly generated daisy.
+	 * @param daisyType the type of the daisy
+	 */
+	public Daisy(boolean sprout, Params.DaisyType daisyType) {
 		
 		// newborn then set age to 0, otherwise generate it randomly
 		if (sprout) {
@@ -23,10 +37,21 @@ public class Daisy {
 		
 		setDaisyType(daisyType);
 		
-		if (daisyType == DaisyType.WHITE) {
+		if (daisyType == Params.DaisyType.WHITE) {
 			setAlbedo(Params.WHITE_ALBEDO);
 		} else {
 			setAlbedo(Params.BLACK_ALBEDO);
+		}
+		
+		
+		// set max age if extensions applied
+		if (Params.Extension) {
+			Random r = new Random();
+			if (daisyType == Params.DaisyType.WHITE) {
+				maxAge = Params.MAX_AGE - r.nextInt(Params.WHITE_AGE_REDUCE);
+			} else {
+				maxAge = Params.MAX_AGE - r.nextInt(Params.BLACK_AGE_REDUCE);	
+			}
 		}
 	}
 
@@ -52,7 +77,12 @@ public class Daisy {
 		int flag = 1;
 		
 		grow();
-		if (getAge() < Params.MAX_AGE) {
+
+		// return a flag indicating:
+		// 2: if it is able to grow new daisy in its neighbour areas
+		// 0: the daisy dies
+		// 1: the daisy grows up
+		if (getAge() < maxAge) {
 			seedThreshold =(0.1457 * temperature) - (0.0032 * (temperature * temperature)) - 0.6443;
 			
 			if (r.nextDouble() < seedThreshold) {
@@ -65,12 +95,11 @@ public class Daisy {
 		
 		return flag;
 	}
-	
-	public DaisyType getDaisyType() {
+	public Params.DaisyType getDaisyType() {
 		return daisyType;
 	}
 
-	public void setDaisyType(DaisyType daisyType) {
+	public void setDaisyType(Params.DaisyType daisyType) {
 		this.daisyType = daisyType;
 	}
 

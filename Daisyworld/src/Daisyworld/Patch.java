@@ -7,10 +7,13 @@ import java.lang.Math;
  */
 public class Patch {
 
+	/* the image of the patch displayed in the map */
 	public char image = ' ';
 	
+	/* the daisy on the patch */
 	private Daisy daisy;
 	
+	/* the temperature of the patch */
 	private double temperature = Params.global_tempreature;
 	
 	/**
