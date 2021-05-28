@@ -1,6 +1,9 @@
 package Daisyworld;
 import Daisyworld.Params.ScenarioType;
 
+/**
+ * PatchController class control the up
+ */
 public class PatchController extends PatchControlThread {
 	
 	private int ticks = 0;
@@ -34,6 +37,10 @@ public class PatchController extends PatchControlThread {
 		}
 	}
 	
+	/**
+	 * calculate the global temperature of the map
+	 * @return
+	 */
 	public synchronized double calculate_global_temperature() {
 		double total = 0;
 		int i, j;
@@ -46,6 +53,9 @@ public class PatchController extends PatchControlThread {
 		return total / (Params.ROWS * Params.COLUMNS);
 	}
 	
+	/**
+	 * perform temperature diffusion 
+	 */
 	public synchronized void diffuse() {
 		int i, j, x ,y;
 
@@ -102,6 +112,10 @@ public class PatchController extends PatchControlThread {
 		}
 	}
 	
+	/**
+	 * checkSurvivability check the state of daisies on each patch and 
+	 * make relavent update if necessary
+	 */
 	public synchronized void checkSurvivability() {
 		int i, j;
 		
@@ -120,6 +134,13 @@ public class PatchController extends PatchControlThread {
 		}
 	}
 	
+	/**
+	 * sprout daisies on an empty neighbor patch randomly 
+	 * if a patch provides seeds
+	 * @param map 
+	 * @param i the row of the patch that provides seed
+	 * @param j the column of the patch that provides seed
+	 */
 	private synchronized void growRandomEmptyPatch(Patch[][] map, int i, int j) {
 		int x, y;
 

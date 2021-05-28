@@ -1,12 +1,16 @@
 package Daisyworld;
 
+/**
+ * Params contains all the parameters involved in the system
+ * To adjust the parameters, simply change the value in a provided range 
+ */
 public class Params {
 
 	public static final int ROWS = 30;
 	public static final int COLUMNS = 30;
 	public static final int  MAX_AGE = 25;
-	public static final int BLACK_PORTION = 20; // 0% to 100%
-	public static final int WHITE_PORTION = 0; // 0% to 100%
+	public static final int BLACK_PORTION = 20; // 0% to 50%
+	public static final int WHITE_PORTION = 0; // 0% to 50%
 	public static final double BLACK_ALBEDO = 0.25; // 0 to 1
 	public static final double WHITE_ALBEDO = 0.75; // 0 to 1
 	public static final double SURFACE_ALBEDO = 0.4; // 0 to 1

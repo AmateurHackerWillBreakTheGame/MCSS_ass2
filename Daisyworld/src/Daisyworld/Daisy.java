@@ -39,8 +39,12 @@ public class Daisy {
 		setAge(getAge() + 1);
 	}
 	
-	/*
+	/**
 	 * check the survivability of the daisy.
+	 * @param temperature the temperature of the patch
+	 * @return 0 if the daisies are died, 
+	 *         1 if the daisies are still alive and not providing seeds
+	 * 		   2 if the daisies providing seeds
 	 */
 	public int checkSurvivability(double temperature) {
 		double seedThreshold = 0;

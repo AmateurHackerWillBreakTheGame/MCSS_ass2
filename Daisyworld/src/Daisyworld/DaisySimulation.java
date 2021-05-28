@@ -1,8 +1,16 @@
 package Daisyworld;
 import java.util.Random;
-
+/**
+ * DaisySimulation class simulate the grows of black and white daisies 
+ * on a 30*30 map
+ */
 public class DaisySimulation {
 	
+	/**
+	 * initiateMap function create a initial 30*30 map by randomly assign
+	 * daisies on patches based on the intial portion
+	 * @return a 30*30 patches that contains daisies
+	 */
 	private static Patch[][] initiateMap() {
 		
 		// 30x30 map
